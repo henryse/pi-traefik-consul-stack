@@ -8,8 +8,12 @@ nocolor='\033[0m'
 
 # Find the IP Address of the VM running docker.
 #
-eval $(docker-machine env default)
-export DOCKER_IP=$(docker-machine ip default)
+# eval $(docker-machine env default)
+# export DOCKER_IP=$(docker-machine ip default)
+
+# Having issue getting docker-machine built on PI, assume we are on eth0:
+#
+export DOCKER_IP=$(/sbin/ip -4 -o addr show dev eth0| awk '{split($4,a,"/");print a[1]}')
 
 # Fire it up!
 #
