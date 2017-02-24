@@ -8,7 +8,7 @@ services:
     network_mode: host
 
   traefik:
-    image: hypriot/rpi-traefik:v1.0.3
+    image: hypriot/rpi-traefik:latest
     ports:
       - "8080:8080"
       - "8081:8081"
