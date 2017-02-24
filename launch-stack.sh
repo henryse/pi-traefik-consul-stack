@@ -8,8 +8,8 @@ nocolor='\033[0m'
 
 # Find the IP Address of the VM running docker.
 #
-eval $(docker-machine env consul-stack)
-export DOCKER_IP=$(docker-machine ip consul-stack)
+eval $(docker-machine env default)
+export DOCKER_IP=$(docker-machine ip default)
 
 # Fire it up!
 #
