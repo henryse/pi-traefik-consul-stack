@@ -1,0 +1,29 @@
+version: "2"
+services:
+  consul:
+    image: hypriot/rpi-consul:latest
+    command: agent -server -bootstrap -client 0.0.0.0 -advertise $DOCKER_IP -ui
+    network_mode: host
+    logging:
+      driver: none
+
+  traefik:
+    image: hypriot/rpi-traefik:latest
+    network_mode: host
+    extra_hosts:
+      - "consul:${DOCKER_IP}"
+    volumes:
+      - "$PWD/traefik/traefik.toml:/etc/traefik/traefik.toml"
+    depends_on:
+      - consul
+
+  registrator:
+    image: hypriot/rpi-registrator:latest
+    volumes:
+      - "/var/run/docker.sock:/tmp/docker.sock"
+    command: -ip $DOCKER_IP consul://$DOCKER_IP:8500
+    network_mode: host
+    logging:
+      driver: none
+    depends_on:
+      - consul
