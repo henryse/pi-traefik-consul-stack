@@ -8,17 +8,17 @@ nocolor='\033[0m'
 
 # Find the IP Address of the VM running docker.
 #
-# eval $(docker-machine env default)
-# export DOCKER_IP=$(docker-machine ip default)
-
-# Having issue getting docker-machine built on PI, assume we are on eth0:
-#
 export DOCKER_IP="0.0.0.0"
 
-if [ "$(uname)" == "Darwin" ]; then
-   DOCKER_IP=$(ifconfig en0 | awk '$1 == "inet" {print $2}')
-elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
-   DOCKER_IP=$(ifconfig eth0 | grep 'inet addr:' | cut -d: -f2 | awk '{ print $1}')
+if hash docker-machine 2>/dev/null; then
+    eval $(docker-machine env default)
+    DOCKER_IP=$(docker-machine ip default)
+else
+    if [ "$(uname)" == "Darwin" ]; then
+       DOCKER_IP=$(ifconfig en0 | awk '$1 == "inet" {print $2}')
+    elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
+       DOCKER_IP=$(ifconfig eth0 | grep 'inet addr:' | cut -d: -f2 | awk '{ print $1}')
+    fi
 fi
 
 # Fire it up!
