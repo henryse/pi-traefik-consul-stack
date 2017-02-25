@@ -61,7 +61,7 @@ services:
       - consul
 
   traefik-consul-stack-docker-ui:
-    image: hypriot/rpi-dockerui
+    image: portainer/portainer:arm
     restart: always
     volumes:
       - '/var/run/docker.sock:/var/run/docker.sock'
