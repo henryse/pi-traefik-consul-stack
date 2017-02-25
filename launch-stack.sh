@@ -13,7 +13,13 @@ nocolor='\033[0m'
 
 # Having issue getting docker-machine built on PI, assume we are on eth0:
 #
-export DOCKER_IP=$(/sbin/ip -4 -o addr show dev eth0| awk '{split($4,a,"/");print a[1]}')
+export DOCKER_IP="0.0.0.0"
+
+if [ "$(uname)" == "Darwin" ]; then
+   DOCKER_IP=$(ifconfig en0 | awk '$1 == "inet" {print $2}')
+elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
+   DOCKER_IP=$(ifconfig eth0 | grep 'inet addr:' | cut -d: -f2 | awk '{ print $1}')
+fi
 
 # Fire it up!
 #
