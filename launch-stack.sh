@@ -47,6 +47,10 @@ else
     fi
 fi
 
+# We need to get the password:
+#
+export PASSWORD_JSON=$(cat password.json);
+
 # Fire it up!
 #
 docker-compose up -d

@@ -69,3 +69,9 @@ services:
       - 9000
     ports:
       - 9000:9000
+
+  password:
+    image: appropriate/curl:latest
+    command: -X POST -d '${PASSWORD_JSON}' http://${DOCKER_IP}:9000/api/users/admin/init
+    depends_on:
+      - traefik-consul-stack-docker-ui
