@@ -96,7 +96,7 @@ services:
       - 9000:9000
 
   password:
-    image: henryse/docker-curl:latest
+    image: henryse/pi-curl:latest
     environment:
       - "CURL_SLEEP=10"
     command: -X POST -d '${PASSWORD_JSON}' http://${DOCKER_IP}:9000/api/users/admin/init
