@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#**********************************************************************
+# **********************************************************************
 #    Copyright (c) 2017 Henry Seurer
 #
 #    Permission is hereby granted, free of charge, to any person
@@ -23,7 +23,7 @@
 #    FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 #    OTHER DEALINGS IN THE SOFTWARE.
 #
-#**********************************************************************
+# **********************************************************************
 
 # Set some pretty colors...
 #
@@ -34,7 +34,6 @@ nocolor='\033[0m'
 
 # Find the IP Address of the VM running docker.
 #
-
 if hash docker-machine env default 2>/dev/null; then
     eval $(docker-machine env default)
     export DOCKER_IP=$(docker-machine ip default)
@@ -52,24 +51,21 @@ if [ "${DOCKER_IP}" == "" ]; then
     export DOCKER_IP="127.0.0.1"
 fi
 
-# Setup traefik.toml file with the correct IP Address
+# Setup traefik.toml file with the correct IP Address if in Desktop mode
 #
-export CONSUL_IP=${DOCKER_IP}
-cat $(pwd)/traefik/traefik.toml.sed |  sed -e "s/CONSUL_IP/${CONSUL_IP}/g" > $(pwd)/../env/$1/traefik.toml
-
-# We need to get the password:
-#
-export PASSWORD_JSON=$(cat password.json);
+if [ "desktop" == "${1}" ]; then
+    export CONSUL_IP=${DOCKER_IP}
+    cat $(pwd)/../env/$1/config/traefik/traefik.toml.sed |  sed -e "s/CONSUL_IP/${CONSUL_IP}/g" > $(pwd)/../env/$1/config/traefik/traefik.toml
+fi
 
 # Fire it up!
 #
 pushd ../env/$1
-docker-compose up -d --remove-orphans
+docker-compose up -d
 popd
 
 # Dump Handy IP Addresses
 #
-
 echo -e "${white}Docker host is ${green}${DOCKER_IP}${nocolor} as ${1}"
 echo -e ""
 echo -e "Consul:           ${dark_green}${DOCKER_IP}${nocolor}:${green}8500${nocolor}"

@@ -46,7 +46,7 @@ services:
       - 8400:8400
       - 8500:8500
       - 8600:8600
-    command: agent -server -bootstrap -client 0.0.0.0 -advertise $DOCKER_IP -ui -data-dir=/tmp/consul
+    command: agent -server -bootstrap -client 0.0.0.0 -advertise $DOCKER_IP -ui -data-dir=/tmp/consul -config-dir=/consul/config -data-dir=/consul/data
 
   traefik:
     image: hypriot/rpi-traefik:latest
@@ -63,7 +63,7 @@ services:
     extra_hosts:
       - "consul:${DOCKER_IP}"
     volumes:
-      - "$PWD/traefik.toml:/etc/traefik/traefik.toml"
+      - "$PWD/config/traefik/traefik.toml:/etc/traefik/traefik.toml"
     depends_on:
       - consul
 
@@ -76,7 +76,6 @@ services:
     volumes:
       - "/var/run/docker.sock:/tmp/docker.sock"
     command: -ip $DOCKER_IP consul://$DOCKER_IP:8500
-    network_mode: host
     logging:
       driver: none
     depends_on:
@@ -98,15 +97,19 @@ services:
   password:
     image: henryse/pi-curl:latest
     environment:
-      - "CURL_SLEEP=10"
-    command: -X POST -d '${PASSWORD_JSON}' http://${DOCKER_IP}:9000/api/users/admin/init
+        - "CURL_SLEEP=10"
+    command: -X POST -d '@/config/portainer/password.json' http://${DOCKER_IP}:9000/api/users/admin/init
+    volumes:
+      - "$PWD/config:/config"
     depends_on:
       - portainer
 
   consul_setup:
     image: henryse/pi-curl:latest
-    environment:
-      - "CURL_SLEEP=10"
-    command: "-X PUT -d '{\"ID\": \"consul\", \"Name\": \"consul\", \"Tags\": [\"traefik.enable=false\"], \"Address\": \"\", \"Port\": 8300, \"EnableTagOverride\": false, \"CreateIndex\": 0, \"ModifyIndex\": 0}' http://${DOCKER_IP}:8500/v1/agent/service/register"
-    depends_on:
-      - consul
+      environment:
+          - "CURL_SLEEP=10"
+      command: -X PUT -d '@/config/consul/consul_config.json' http://${DOCKER_IP}:9500/v1/agent/service/register
+      volumes:
+        - "$PWD/config:/config"
+      depends_on:
+        - consul
