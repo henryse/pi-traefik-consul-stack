@@ -15,3 +15,6 @@ To launch the stack simply do the following:
 To stop the stack you can use:
 
         make stop
+# Notes
+
+You will need to instal https://github.com/henryse/pi-curl.git
