@@ -106,10 +106,10 @@ services:
 
   consul_setup:
     image: henryse/pi-curl:latest
-      environment:
-          - "CURL_SLEEP=10"
-      command: -X PUT -d '@/config/consul/consul_config.json' http://${DOCKER_IP}:9500/v1/agent/service/register
-      volumes:
-        - "$PWD/config:/config"
-      depends_on:
-        - consul
+    environment:
+      - "CURL_SLEEP=10"
+    command: -X PUT -d '@/config/consul/consul_config.json' http://${DOCKER_IP}:9500/v1/agent/service/register
+    volumes:
+      - "$PWD/config:/config"
+    depends_on:
+      - consul
