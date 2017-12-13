@@ -17,4 +17,8 @@ To stop the stack you can use:
         make stop
 # Notes
 
-You will need to instal https://github.com/henryse/pi-curl.git
+You will need to instal henryse/pi-curl
+
+       git clone https://github.com/henryse/pi-curl.git
+       cd pi-curl
+       make build
